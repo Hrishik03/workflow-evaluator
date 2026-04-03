@@ -1,41 +1,75 @@
 # AI Workflow Evaluator
 
-This project is a Streamlit app that evaluates how effectively an engineer uses AI during software development conversations.
+A Streamlit app that evaluates how effectively an engineer uses AI during software development conversations.
 
-It accepts transcript files (`.txt`, `.md`, `.pdf`, `.doc`, `.docx`), parses user/AI turns, sends them to Groq for scoring, and displays:
+It accepts transcript files (`.txt`, `.md`, `.pdf`, `.doc`, `.docx`), parses user/AI turns, sends them to Groq for scoring, and displays structured insights across multiple dimensions.
 
-- Prompt Clarity
-- Iteration Quality
-- Debugging Approach
-- AI Utilization
-- Overall Score (weighted)
-- Confidence Score (%)
-- Detected development phases and phase distribution
-- Strengths, improvements, and summary
+## What It Evaluates
+
+- **Prompt Clarity** — how specific and well-defined the prompts were
+- **Iteration Quality** — whether the engineer refined prompts vs accepting first responses
+- **Debugging Approach** — how effectively AI was used to identify and fix issues
+- **AI Utilization** — whether AI was used for the right tasks at the right time
+- **Overall Score** — weighted average across all metrics
+- **Confidence Score** — combined model confidence + signal quality factor
+- **Phase Detection** — identifies development phases (planning, implementation, debugging, etc.)
+- **Strengths & Improvements** — concrete, actionable feedback per session
 
 ## Project Structure
+project/
+├── app.py            # Streamlit UI, file upload, charts, comparison table
+├── analyzer.py       # Transcript parsing, Groq scoring, phase detection, confidence
+├── transcripts/      # Sample real transcripts used for testing
+├── requirements.txt  # Python dependencies
+├── .env              # Your Groq API key (not committed)
+└── README.md
 
-- `app.py` - Streamlit UI, file upload, multi-transcript evaluation, charts, and summary table
-- `analyzer.py` - transcript parsing + Groq-based scoring + phase detection + confidence scoring
-- `requirements.txt` - Python dependencies
+## Approach
+
+Transcripts are parsed into structured user/assistant turns using regex-based pattern matching that supports multiple formats (plain text, markdown headings, bold labels). The parsed turns are sent to Groq (LLaMA 3) with a structured prompt that instructs the model to return strict JSON scores.
+
+A **signal quality factor** is computed locally based on:
+- Number of turns in the conversation
+- Total character length
+- Balance between user and assistant turns
+
+This is combined with the **model's self-reported confidence** to produce a final confidence score, giving a more reliable picture of how trustworthy the evaluation is for short or sparse transcripts.
+
+When multiple transcripts are uploaded, a **comparison table** is shown at the top summarizing scores across all sessions.
+
+## What Makes a Good AI Workflow?
+
+- **Clear, specific prompts** with enough context for the AI to give useful responses
+- **Iterative refinement** — following up, pushing back, and improving on first responses
+- **Structured debugging** — using AI as a thinking partner, not just a answer machine
+- **Appropriate utilization** — knowing when to use AI and when to think independently
+- **Phase awareness** — moving deliberately through planning, implementation, and testing
 
 ## Setup
 
-1. Create and activate a virtual environment (recommended).
-2. Install dependencies:
+**Requirements:** Python 3.9+
 
+1. Clone the repository and navigate into it.
+
+2. Create and activate a virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Create a `.env` file in the project root with:
-
+4. Create a `.env` file in the project root:
 ```env
 GROQ_API_KEY=your_groq_api_key_here
 ```
 
-## Run the App
+You can get a free Groq API key at [console.groq.com](https://console.groq.com).
 
+## Run the App
 ```bash
 streamlit run app.py
 ```
@@ -44,21 +78,27 @@ Then open the local Streamlit URL shown in the terminal.
 
 ## How to Use
 
-1. Upload one or more transcript files.
-2. Click **Analyze all uploaded transcripts**.
+1. Upload one or more transcript files
+2. Click **Analyze all uploaded transcripts**
 3. Review:
-   - top summary table (when multiple files are uploaded)
-   - per-transcript metrics and charts
-   - phase analysis
-   - JSON output per transcript
+   - Summary comparison table (when multiple files uploaded)
+   - Per-transcript metric scores and bar charts
+   - Phase detection and distribution
+   - Strengths, improvements, and summary per session
 
-## Transcript Formatting Notes
+## Transcript Format
 
-For best parsing results, use speaker labels such as:
+For best results, use speaker labels like:
 
-- `User: ...`
-- `Assistant: ...`
-- `AI: ...`
-- `Human: ...`
+- `User: ...` / `Human: ...`
+- `Assistant: ...` / `AI: ...`
 
-Markdown-style speaker formats are also supported (for example `## User`, `**Assistant:** ...`).
+Markdown-style formats are also supported:
+
+- `## User` followed by content on the next line
+- `**Assistant:** ...`
+- `> User: ...`
+
+## Sample Transcripts
+
+The `transcripts/` folder contains real anonymized coding sessions used during development and testing, sourced from Cursor and ChatGPT sessions.
