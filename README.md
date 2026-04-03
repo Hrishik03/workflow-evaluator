@@ -15,14 +15,19 @@ It accepts transcript files (`.txt`, `.md`, `.pdf`, `.doc`, `.docx`), parses use
 - **Phase Detection** — identifies development phases (planning, implementation, debugging, etc.)
 - **Strengths & Improvements** — concrete, actionable feedback per session
 
-## Project Structure
-project/
-├── app.py            # Streamlit UI, file upload, charts, comparison table
-├── analyzer.py       # Transcript parsing, Groq scoring, phase detection, confidence
-├── transcripts/      # Sample real transcripts used for testing
-├── requirements.txt  # Python dependencies
-├── .env              # Your Groq API key (not committed)
-└── README.md
+## Project structure
+
+| File | Purpose |
+|------|---------|
+| [`app.py`](app.py) | Streamlit app: uploads, per-file analysis, charts, multi-file summary |
+| [`analyzer.py`](analyzer.py) | Parse transcripts → Groq evaluation → metrics, phases, confidence |
+| [`requirements.txt`](requirements.txt) | Python dependencies |
+| [`.gitignore`](.gitignore) | Ignores `.env`, venvs, caches, etc. |
+| `README.md` | This documentation |
+
+Local-only (create yourself, not in the repo): `.env` with `GROQ_API_KEY`.
+
+Optional: a `transcripts/` folder for sample or test uploads — not required to run the app.
 
 ## Approach
 
@@ -99,6 +104,6 @@ Markdown-style formats are also supported:
 - `**Assistant:** ...`
 - `> User: ...`
 
-## Sample Transcripts
+## Sample transcripts
 
-The `transcripts/` folder contains real anonymized coding sessions used during development and testing, sourced from Cursor and ChatGPT sessions.
+The `transcripts/` folder contains real anonymized coding sessions used during development and testing, sourced from Cursor and Claude sessions.
