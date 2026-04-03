@@ -1,0 +1,735 @@
+Slait - Take Home Assessment (1).pdf
+pdf
+
+summarize what this is & what exactly do i have to build
+
+Mar 31
+Summary
+This is a take-home technical assessment for a company called Slait.
+
+The core idea: Build a tool that analyzes your own real AI coding session transcripts (from Cursor, Claude Code, ChatGPT, etc.) and evaluates how effectively an engineer is using AI during development.
+
+What You Need to Build
+A small app (CLI, web app, or notebook) that does 4 things:
+
+Ingests — accepts one or more transcript files as input
+Parses — breaks down the conversation/interaction structure
+Evaluates — scores or assesses the workflow quality using meaningful signals
+Outputs — structured insights (e.g. JSON, a dashboard, a report)
+The central question it should answer: "How effectively is this engineer using AI?"
+
+What You Also Submit
+Your source code on GitHub with a README
+2–3 real transcripts from your own AI coding sessions (can be anonymized)
+A short explanation of your approach
+Bonus Features (Optional but impressive)
+Compare multiple transcripts side by side
+Confidence scores per metric
+Detect workflow phases (planning → implementation → debugging)
+Visual breakdown
+Support multiple transcript formats
+The emphasis is on thinking quality — they're not looking for a perfect scoring algorithm, but a thoughtful, well-structured system grounded in real engineering signals.
+
+Want help designing the architecture or deciding what stack to use?
+
+how can i submit transcript?
+
+Mar 31
+You have a few options depending on which AI tools you use:
+
+Claude.ai (this app) Go to any past conversation → click the three dots (⋯) menu → look for an export or download option. Alternatively, you can manually copy-paste the conversation text.
+
+ChatGPT Settings → Data Controls → Export Data → you'll get a zip file with all your conversations as JSON files.
+
+Cursor Cursor doesn't have a built-in export, but you can:
+
+Copy-paste conversations from the chat panel into a .txt or .md file
+Check ~/.cursor/ or app data folders for any stored logs
+Claude Code (CLI) Transcripts are saved locally. Check:
+
+~/.claude/ directory on Mac/Linux
+They're stored as JSONL files you can use directly
+GitHub Copilot No official export — you'd need to manually copy-paste sessions.
+
+Easiest path honestly: Just copy-paste 2-3 real conversations into .txt or .md files. They don't need to be in any special format — your tool can define the format it accepts.
+
+What tools do you normally use for AI-assisted coding? I can help you figure out the quickest way to get transcripts from those specifically.
+
+so what do i need to build
+
+Mar 31
+Based on the assignment, here's exactly what you need to build:
+
+The App
+A tool that takes in your AI coding transcripts and spits out a quality score/report.
+
+The 4 Core Things It Must Do
+1. Ingest Accept transcript files as input — .txt, .md, .json, whatever format your transcripts are in
+
+2. Parse Break the transcript into structured pieces — who said what, when, what phase of work (planning, coding, debugging)
+
+3. Evaluate Score the workflow on signals like:
+
+How clear/specific were the prompts?
+Did the engineer iterate or just accept first response?
+Was there back-and-forth debugging?
+Did they ask for explanations or just copy code?
+4. Output A structured report — could be a dashboard, JSON, or a simple UI showing scores per metric
+
+What Format Should It Be?
+Given the bonus points mention visual breakdown, a simple web app would impress the most. Something like:
+
+Upload a transcript → see a visual report with scores
+My Recommendation for Your Stack
+A React frontend + calling Claude API to do the actual analysis, since you're already using Claude.
+
+Want me to just build this for you? I can make a full working web app where you paste/upload a transcript and get back a structured workflow quality report.
+
+instead of react frontend i can even use streamlit, what do u say
+
+Mar 31
+Streamlit is actually a great choice for this. Here's why:
+
+Streamlit vs React for This Assignment
+Streamlit wins here because:
+
+Much faster to build — you can focus on the logic and insights which is what Slait actually cares about
+Looks clean and professional out of the box
+File upload, charts, metrics, dataframes — all built in, no extra work
+Python-native, so calling Claude API or doing text analysis is seamless
+Easy to run locally and share
+React would only win if:
+
+You wanted a super polished UI
+You had more time to spend on frontend
+What Your Streamlit App Would Look Like
+Upload transcript(s) — file uploader widget
+Parse & analyze — Python + Claude API in the backend
+Show results — st.metric() for scores, st.bar_chart() for breakdown, st.json() for raw output
+It would look something like:
+
+[ Upload Transcript ] → [ Analyze ] → 
+  📊 Overall Score: 7.8/10
+  ✅ Prompt Clarity: 8/10
+  🔄 Iteration Quality: 7/10
+  🐛 Debugging Approach: 8/10
+  📝 Phase Breakdown: Planning → Implementation → Debug
+Go with Streamlit. It's the right tool for this job.
+
+Want me to start building it?
+
+i dont have claude pro, so i'll be using this chat space & will be working with cursor as my ide
+
+Mar 31
+Got it! So the setup is:
+
+Your Setup
+IDE: Cursor (AI assistance for coding)
+AI for analysis: Claude API (via Anthropic) — called from your app
+Frontend: Streamlit
+One Important Thing
+You need a Claude API key to make the app work — this is separate from Claude Pro.
+
+Go to console.anthropic.com
+Sign up / log in
+Create an API key
+You get $5 free credits on signup which is more than enough for this assignment
+Workflow
+Your transcripts (.txt/.md)
+        ↓
+Streamlit app (Python)
+        ↓
+Claude API (does the analysis)
+        ↓
+Visual report with scores
+Plan
+I can help you build the entire thing here in this chat, and you copy the code into Cursor. Cursor can then help you tweak/debug as you go.
+
+Here's what we'd build together:
+
+app.py — Streamlit UI
+analyzer.py — Claude API calls + parsing logic
+requirements.txt + README.md
+Want to start? First question — do you already have an Anthropic API key?
+
+the assignment says that user can submit one or more than one transscript data, so how do we manage that
+
+Mar 31
+Great question! Here's how we handle multiple transcripts:
+
+The Approach
+Streamlit has a built-in multi-file uploader — one line of code:
+
+python
+files = st.file_uploader("Upload transcripts", accept_multiple_files=True)
+What Happens With Multiple Transcripts
+Two modes:
+
+1. Individual Analysis Each transcript gets its own score/report
+
+Transcript 1 (session_1.txt) → Score: 7.8/10
+Transcript 2 (session_2.txt) → Score: 6.5/10
+Transcript 3 (session_3.txt) → Score: 8.2/10
+2. Comparison View ← this is the bonus feature they mentioned Side by side comparison showing which session had better workflow, where you improved, patterns across sessions
+
+Data Flow
+Upload multiple files
+        ↓
+Loop through each → send to Claude API individually
+        ↓
+Store results for each transcript
+        ↓
+Show individual reports + combined comparison
+Why This Matters for the Assignment
+The comparison across sessions is explicitly listed as a bonus feature — so handling multiple transcripts well will directly impress them.
+
+Ready to start building? I'd suggest this file structure:
+
+project/
+├── app.py              # Streamlit UI
+├── analyzer.py         # Claude API + analysis logic
+├── transcripts/        # Your real transcripts go here
+├── requirements.txt
+└── README.md
+Shall we start with analyzer.py first since that's the core logic?
+
+i dont have claude api key, i'll use another one
+
+Mar 31
+No problem! Which API are you planning to use?
+
+Q: Which AI API will you use for the analysis?
+A: Groq (free & fast)
+
+Mar 31
+Great choice! Groq is free, very fast, and supports powerful models like LLaMA 3 which is more than capable for this task.
+
+What You Need
+Go to console.groq.com
+Sign up (free)
+Create an API key
+That's it — generous free tier, no credit card needed
+How It Fits In
+Your transcripts
+      ↓
+Streamlit app
+      ↓
+Groq API (LLaMA 3) — does the analysis
+      ↓
+Visual report with scores
+The code change is minimal — instead of Claude API we just use Groq's client which has an OpenAI-compatible interface, so it's very straightforward.
+
+python
+from groq import Groq
+
+client = Groq(api_key="your_groq_key")
+response = client.chat.completions.create(
+    model="llama-3.3-70b-versatile",
+    messages=[...]
+)
+Do you already have a Groq API key, or do you need to sign up first?
+
+Once you confirm you have the key, we'll start building. I'd suggest starting with analyzer.py — shall we go?
+
+lets start from beginning i've made a dir, what to do next
+
+Mar 31
+Let's go step by step!
+
+Step 1 — Project Structure
+First, create these files/folders inside your directory:
+
+your-project/
+├── app.py
+├── analyzer.py
+├── requirements.txt
+├── .env
+├── .gitignore
+└── transcripts/        ← folder where you'll put your transcript files
+Do this in your terminal:
+
+bash
+mkdir transcripts
+touch app.py analyzer.py requirements.txt .env .gitignore
+Step 2 — .gitignore
+Add this to .gitignore right away so you don't accidentally push your API key:
+
+.env
+__pycache__/
+*.pyc
+.DS_Store
+Step 3 — .env
+Add your Groq API key here:
+
+GROQ_API_KEY=your_groq_api_key_here
+Step 4 — requirements.txt
+Add these dependencies:
+
+streamlit
+groq
+python-dotenv
+Then install them:
+
+bash
+pip install -r requirements.txt
+Once you've done all this, tell me and we'll start writing analyzer.py next — that's the core logic.
+
+yes done with it lets move with analyzer, dont give entire code until i say to do so
+
+Mar 31
+Perfect! Let's think through analyzer.py before writing any code.
+
+What Should analyzer.py Do?
+It has 3 responsibilities:
+
+Parse the transcript — break it into user messages vs AI responses
+Evaluate — send it to Groq and get quality scores
+Return structured results that app.py can display
+First Decision — What Metrics Do We Score?
+Here's what I'm thinking, based on the assignment:
+
+Prompt Clarity — were the prompts specific and well-defined?
+Iteration Quality — did the engineer refine/follow up or just accept first answer?
+Debugging Approach — how well did they handle errors/problems?
+AI Utilization — did they use AI for the right things?
+Overall Score — weighted average of all
+Second Decision — What Does Groq Return?
+We'll ask Groq to return structured JSON like:
+
+json
+{
+  "prompt_clarity": 8,
+  "iteration_quality": 7,
+  "debugging_approach": 6,
+  "ai_utilization": 8,
+  "overall_score": 7.5,
+  "summary": "...",
+  "strengths": [...],
+  "improvements": [...]
+}
+Do these metrics make sense to you, or do you want to add/change anything before we start coding?
+
+
+import json import os import re from typing import Any, Dict, List, Optional from dotenv import load_dotenv from groq import Groq load_dotenv() DEFAULT_MODEL = "llama-3.1-8b-instant" DEFAULT_WEIGHTS = { "prompt_clarity": 0.25, "iteration_quality": 0.25, "debugging_
+
+pasted
+
+my code for analyzer.py, does this answer all the requirement stated in the pdf
+
+Mar 31
+Your analyzer.py is solid! Let me break down what it covers vs what's missing:
+
+✅ What It Covers
+Ingests transcript text
+Parses into user/assistant turns with flexible role detection
+Evaluates via Groq with 4 meaningful metrics
+Returns structured JSON with scores, strengths, improvements, summary
+Error handling for empty transcripts, missing API key, bad JSON response
+Weighted scoring system
+⚠️ Gaps vs Assignment Requirements
+1. Multiple transcript formats Right now it only handles user: ... / assistant: ... style. Real transcripts from Cursor, ChatGPT export, Claude etc. look different. You may want to handle JSON format too.
+
+2. Phase detection (bonus) No detection of planning → implementation → debugging phases. This was listed as a bonus and would impress them.
+
+3. Confidence score per metric (bonus) The assignment mentions this — right now Groq just returns a number with no confidence.
+
+4. Comparison across sessions The logic for comparing multiple transcripts isn't here — but that likely belongs in app.py so it's fine.
+
+My Suggestion
+The core is done well. Before moving to app.py I'd add one thing to analyzer.py — phase detection, since it's directly mentioned as a bonus.
+
+Want me to show you how to add that, or shall we move to app.py first?
+
+without giving the code, tell me explicitly what changes do need ti make in analyzer
+
+Mar 31
+Here are the exact changes needed in analyzer.py:
+
+1. Better Transcript Format Support
+Currently your parser only handles plain text format like user: .... You need to also handle:
+
+JSON format — ChatGPT exports as JSON, Cursor sometimes too
+Markdown format — some tools export with **User:** or ### Human:
+Make parse_transcript detect the format first, then route to the right parser
+2. Phase Detection
+Add a new function detect_phases(turns) that:
+
+Looks at the conversation flow and labels each turn as planning, implementation, or debugging
+Uses keywords — e.g. "how do I", "what's the best way" = planning; "write code", "implement" = implementation; "error", "fix", "not working" = debugging
+Returns a phase breakdown like {"planning": 30%, "implementation": 50%, "debugging": 20%}
+3. Confidence Score Per Metric
+Update _build_eval_prompt to ask Groq to also return a confidence score for each metric
+So instead of just "prompt_clarity": 8 you get "prompt_clarity": 8, "prompt_clarity_confidence": 0.85
+Add confidence calculation to the final returned object
+4. Update analyze_transcript
+The final return object should include:
+
+Existing scores
+Phase breakdown from step 2
+Confidence scores from step 3
+These 4 changes make analyzer.py complete. Want to go ahead and implement them in Cursor, then share the updated code?
+
+what goes in transcript dir btw
+
+Apr 1
+The transcripts/ folder is where you put your real AI coding session transcripts that you'll use to test your app AND submit as part of the assignment.
+
+What Files Go In There
+Actual conversations you've had with AI tools while coding. For example:
+
+transcripts/
+├── session_1.txt      ← a Cursor conversation
+├── session_2.txt      ← a ChatGPT coding session
+├── session_3.txt      ← another session
+What They Should Look Like
+Just copy-paste a real conversation you had. For example a .txt file:
+
+user: how do I reverse a linked list in python
+assistant: Here's how you can reverse a linked list...
+
+user: this gives an error, AttributeError: NoneType
+assistant: The issue is you're not handling the null check...
+
+user: ok now write tests for this
+assistant: Here are the unit tests...
+Important Points
+Minimum 2-3 transcripts required by the assignment
+They can be anonymized — remove any sensitive code/company info
+They should be from real sessions, not made up
+Any format is fine since your parser will handle it
+Where To Get Them
+Since you use Cursor — just open a past chat session in Cursor and copy-paste the conversation into a .txt file.
+
+Do you have some past Cursor sessions you can pull from?
+
+
+import streamlit as st from analyzer import analyze_transcript from io import BytesIO from pathlib import Path from docx import Document from pypdf import PdfReader def extract_text_from_file(uploaded_file) -> str: suffix = Path(uploaded_file.name).suffix.lower() file_bytes = u
+
+pasted
+
+
+import json import os import re from typing import Any, Dict, List, Optional from dotenv import load_dotenv from groq import Groq load_dotenv() DEFAULT_MODEL = "llama-3.1-8b-instant" DEFAULT_WEIGHTS = { "prompt_clarity": 0.25, "iteration_quality": 0.25, "debugging_
+
+pasted
+
+pasting my app.py & analyzer.py, does this passes the requirement in stated in earlier given workflow, if not then what else is needed to improve
+
+Apr 2
+Good progress! Let me evaluate both files against the requirements:
+
+✅ What's Already Done
+Multi-file upload works
+Supports PDF, TXT, MD, DOCX formats
+Parses multiple transcript formats (plain, markdown, heading style)
+Evaluates with Groq and returns structured scores
+Shows metrics, summary, strengths, improvements
+Raw JSON expander
+Error handling throughout
+❌ What's Missing
+In app.py:
+
+Individual results per transcript — right now you're combining all transcripts into one with "\n\n".join(extracted_texts) and analyzing as a single blob. The assignment wants each transcript evaluated separately
+Comparison view — no side-by-side comparison across multiple sessions (bonus but impactful)
+Visual charts — metrics are shown as plain numbers, no bar chart or radar chart
+Phase breakdown display — no UI for it yet
+In analyzer.py:
+
+Phase detection — still not implemented
+Confidence scores — still not implemented
+JSON format parsing — parser still doesn't handle ChatGPT JSON exports
+Priority Order to Fix
+Fix the per-transcript analysis in app.py — this is a core requirement
+Add phase detection in analyzer.py
+Add charts in app.py
+Add comparison view in app.py
+Confidence scores last — nice to have
+Want to tackle them in this order?
+
+
+import streamlit as st from analyzer import analyze_transcript from io import BytesIO from pathlib import Path from docx import Document from pypdf import PdfReader def extract_text_from_file(uploaded_file) -> str: suffix = Path(uploaded_file.name).suffix.lower() file_bytes = u
+
+pasted
+
+
+import json import os import re from typing import Any, Dict, List, Optional from dotenv import load_dotenv from groq import Groq load_dotenv() DEFAULT_MODEL = "llama-3.1-8b-instant" DEFAULT_WEIGHTS = { "prompt_clarity": 0.25, "iteration_quality": 0.25, "debugging_
+
+pasted
+
+i think everything is covered now
+
+Apr 2
+Looking at both files now — you've covered a lot! Let me give you an honest checklist:
+
+✅ Now Covered
+Per-transcript individual analysis
+Phase detection + phase distribution with bar chart
+Multi-format parsing
+Structured metrics display
+Strengths, improvements, summary
+Error handling
+Raw JSON expander
+Still Missing
+Core:
+
+Comparison view — when multiple transcripts are uploaded, there's no side-by-side summary table showing all scores together. Right now each is in its own expander but no cross-session comparison
+Bonus (but impactful):
+
+Confidence scores — still not in the prompt or returned schema
+Visual metric chart — metrics are shown as plain st.metric() numbers, no bar chart for the 4 scores per transcript
+My Honest Take
+For the assignment requirements, you're about 85% done. The two things I'd prioritize before submitting:
+
+Comparison table — add a summary table at the top when multiple files are uploaded showing all transcripts' scores side by side. This is explicitly mentioned as a bonus and is easy to add in app.py
+Metric bar chart — one st.bar_chart() per transcript showing the 4 metric scores visually
+Confidence scores are nice-to-have but lower priority.
+
+Want to tackle the comparison table next?
+
+
+import json import os import re from typing import Any, Dict, List, Optional from dotenv import load_dotenv from groq import Groq load_dotenv() DEFAULT_MODEL = "llama-3.1-8b-instant" DEFAULT_WEIGHTS = { "prompt_clarity": 0.25, "iteration_quality": 0.25, "debugging_
+
+pasted
+
+
+import streamlit as st from analyzer import analyze_transcript from io import BytesIO from pathlib import Path from docx import Document from pypdf import PdfReader def extract_text_from_file(uploaded_file) -> str: suffix = Path(uploaded_file.name).suffix.lower() file_bytes = u
+
+pasted
+
+i believe everything is now covered
+
+11:05 PM
+Looking at both files carefully — yes, you're in great shape! Let me do a final checklist:
+
+✅ Fully Covered Now
+Per-transcript individual analysis
+Multi-file upload
+Comparison summary table (shows when >1 transcript)
+Metric bar chart per transcript
+Phase detection + phase distribution chart
+Confidence score (model confidence + signal quality factor combined)
+Strengths, improvements, summary
+Multiple format support (PDF, TXT, MD, DOCX)
+Error handling throughout
+Multi-format transcript parsing
+Bonus Features Status
+✅ Transcript comparison across sessions
+✅ Confidence score per metric
+✅ Phase detection
+✅ Visual breakdown
+✅ Multiple transcript format support
+Minor Things to Still Do Before Submitting
+README.md — setup instructions, how to run, your approach explanation. The assignment explicitly requires this
+Put your real transcripts in the transcripts/ folder
+Push to GitHub and submit via their link
+Update requirements.txt — make sure python-docx and pypdf are in there since you added those imports
+You're essentially done with the code. Focus on the README and transcripts now — those are submission requirements. Want help writing the README?
+
+here the readme.md, i believe its upto the requirement or do u suggest some changes
+
+# AI Workflow Evaluator
+
+This project is a Streamlit app that evaluates how effectively an engineer uses AI during software development conversations.
+
+It accepts transcript files (`.txt`, `.md`, `.pdf`, `.doc`, `.docx`), parses user/AI turns, sends them to Groq for scoring, and displays:
+
+- Prompt Clarity
+- Iteration Quality
+- Debugging Approach
+- AI Utilization
+- Overall Score (weighted)
+- Confidence Score (%)
+- Detected development phases and phase distribution
+- Strengths, improvements, and summary
+
+## Project Structure
+
+- `app.py` - Streamlit UI, file upload, multi-transcript evaluation, charts, and summary table
+- `analyzer.py` - transcript parsing + Groq-based scoring + phase detection + confidence scoring
+- `requirements.txt` - Python dependencies
+
+## Setup
+
+1. Create and activate a virtual environment (recommended).
+2. Install dependencies:
+
+```bash
+pip install -r requirements.txt
+Create a .env file in the project root with:
+GROQ_API_KEY=your_groq_api_key_here
+## Run the App
+
+streamlit run app.py
+Then open the local Streamlit URL shown in the terminal.
+
+## How to Use
+
+Upload one or more transcript files.
+Click **Analyze all uploaded transcripts**.
+Review:
+top summary table (when multiple files are uploaded)
+per-transcript metrics and charts
+phase analysis
+JSON output per transcript
+## Transcript Formatting Notes
+
+For best parsing results, use speaker labels such as:
+
+User: ...
+Assistant: ...
+AI: ...
+Human: ...
+Markdown-style speaker formats are also supported (for example ## User, **Assistant:** ...).
+
+```
+
+Show more
+11:07 PM
+The README is solid and covers the basics. A few suggestions to make it stronger:
+
+What's Good ✅
+Clear structure
+Setup instructions are complete
+Transcript format guide is helpful
+Project structure explained
+Suggested Additions
+1. Add a short "Approach" section — the assignment explicitly asks for a "short explanation of your approach". This is currently missing. Add something like:
+
+markdown
+## Approach
+
+The evaluator parses transcripts into structured user/assistant turns, 
+then sends them to Groq (LLaMA 3) with a structured prompt that returns 
+JSON scores. A signal quality factor is computed locally based on turn 
+count, length, and balance — combined with model confidence to produce 
+a final confidence score.
+2. Add a "What Makes a Good AI Workflow" section — this is listed as a bonus in the assignment and shows thoughtfulness:
+
+markdown
+## What Makes a Good AI Workflow?
+
+- Clear, specific prompts with context
+- Iterative refinement rather than accepting first responses
+- Using AI for the right tasks (not over-relying)
+- Structured debugging with AI as a thinking partner
+3. Mention the transcripts — add a line saying where the sample transcripts are and what tools they came from.
+
+4. Add Python version requirement — just Python 3.9+ so reviewers know.
+
+Priority
+The Approach section is the most important to add since the assignment explicitly requires it. The rest are nice-to-haves.
+
+Want me to write the full updated README with these additions?
+
+sure
+
+11:07 PM
+Here's the updated README:
+
+markdown
+# AI Workflow Evaluator
+
+A Streamlit app that evaluates how effectively an engineer uses AI during software development conversations.
+
+It accepts transcript files (`.txt`, `.md`, `.pdf`, `.doc`, `.docx`), parses user/AI turns, sends them to Groq for scoring, and displays structured insights across multiple dimensions.
+
+## What It Evaluates
+
+- **Prompt Clarity** — how specific and well-defined the prompts were
+- **Iteration Quality** — whether the engineer refined prompts vs accepting first responses
+- **Debugging Approach** — how effectively AI was used to identify and fix issues
+- **AI Utilization** — whether AI was used for the right tasks at the right time
+- **Overall Score** — weighted average across all metrics
+- **Confidence Score** — combined model confidence + signal quality factor
+- **Phase Detection** — identifies development phases (planning, implementation, debugging, etc.)
+- **Strengths & Improvements** — concrete, actionable feedback per session
+
+## Project Structure
+project/
+├── app.py            # Streamlit UI, file upload, charts, comparison table
+├── analyzer.py       # Transcript parsing, Groq scoring, phase detection, confidence
+├── transcripts/      # Sample real transcripts used for testing
+├── requirements.txt  # Python dependencies
+├── .env              # Your Groq API key (not committed)
+└── README.md
+
+
+## Approach
+
+Transcripts are parsed into structured user/assistant turns using regex-based pattern matching that supports multiple formats (plain text, markdown headings, bold labels). The parsed turns are sent to Groq (LLaMA 3) with a structured prompt that instructs the model to return strict JSON scores.
+
+A **signal quality factor** is computed locally based on:
+- Number of turns in the conversation
+- Total character length
+- Balance between user and assistant turns
+
+This is combined with the **model's self-reported confidence** to produce a final confidence score, giving a more reliable picture of how trustworthy the evaluation is for short or sparse transcripts.
+
+When multiple transcripts are uploaded, a **comparison table** is shown at the top summarizing scores across all sessions.
+
+## What Makes a Good AI Workflow?
+
+- **Clear, specific prompts** with enough context for the AI to give useful responses
+- **Iterative refinement** — following up, pushing back, and improving on first responses
+- **Structured debugging** — using AI as a thinking partner, not just a answer machine
+- **Appropriate utilization** — knowing when to use AI and when to think independently
+- **Phase awareness** — moving deliberately through planning, implementation, and testing
+
+## Setup
+
+**Requirements:** Python 3.9+
+
+1. Clone the repository and navigate into it.
+
+2. Create and activate a virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+4. Create a `.env` file in the project root:
+```env
+GROQ_API_KEY=your_groq_api_key_here
+```
+
+You can get a free Groq API key at [console.groq.com](https://console.groq.com).
+
+## Run the App
+```bash
+streamlit run app.py
+```
+
+Then open the local Streamlit URL shown in the terminal.
+
+## How to Use
+
+1. Upload one or more transcript files
+2. Click **Analyze all uploaded transcripts**
+3. Review:
+   - Summary comparison table (when multiple files uploaded)
+   - Per-transcript metric scores and bar charts
+   - Phase detection and distribution
+   - Strengths, improvements, and summary per session
+
+## Transcript Format
+
+For best results, use speaker labels like:
+
+- `User: ...` / `Human: ...`
+- `Assistant: ...` / `AI: ...`
+
+Markdown-style formats are also supported:
+
+- `## User` followed by content on the next line
+- `**Assistant:** ...`
+- `> User: ...`
+
+## Sample Transcripts
+
+The `transcripts/` folder contains real anonymized coding sessions used during development and testing, sourced from Cursor and ChatGPT sessions.
+This covers everything the assignment asks for — setup instructions, approach explanation, the "good workflow" reflection, and proper project structure. Just update the last line of Sample Transcripts to reflect which tools your actual transcripts came from. Ready to push to GitHub?
+
