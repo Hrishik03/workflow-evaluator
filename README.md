@@ -101,6 +101,7 @@ For best results, use speaker labels like:
 Markdown-style formats are also supported:
 
 - `## User` followed by content on the next line
+- `**User**` / `**Cursor**` on their own lines (Cursor export)
 - `**Assistant:** ...`
 - `> User: ...`
 
